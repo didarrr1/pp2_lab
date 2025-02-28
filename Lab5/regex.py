@@ -1,32 +1,18 @@
-#1 zeroOrMoreB()
 import re
-def zeroOrMoreB():
-    txt = input()
-    x = re.findall("ab*", txt)
-    print(x)
+
+#1 zeroOrMoreB()
+def match_a_b():
+    return bool(re.fullmatch(r'a[b]*', txt))
 
 
 #2 twoORthree()
-def twoORthree():
-    txt = input()
-    x = re.findall("ab{2,3}", txt)
-    print(x)
+def match_a_bb():
+    return bool(re.fullmatch(r'a{1}b{2,3}', txt))
 
 
 #3 sequenceOfLowerLetters()
-def sequenceOfLowerLetters():
-    txt = input()
-    l = []
-    txt = txt.split('_')
-    for i in range(0, len(txt) - 1):
-        x1 = re.search("[a-z]", txt[i])
-        x2 = re.search("[a-z]", txt[i + 1])
-        # print(type(x2))
-        if x1 and x2:
-            l.append(txt[i] + "_" + txt[i + 1])
-    print(l)
-# my problem was if a_i_a_b it printed a_i and a_b, I fixed this problem via using two searches that return object
-# if no match search returns [] if there is match search returns <class 're.Match'> 
+def find_lowercase_underscore():
+    return re.findall(r'[a-z]+_[a-z]+', txt)  
 
 
 #4 findAa()
@@ -45,59 +31,34 @@ def startWithAEndWithB():
 
 #6 replace()
 def replace():
-    txt = input()
-    x = txt
-    # pattern = ",. "
-    x = re.sub("\s", ":", txt)
-    x = re.sub("[.]", ":", x)
-    x = re.sub(",", ":", x)
+    txt = input("Enter a string: ")
+    result = re.sub(r'[\s.,]', ":", txt)
+    print(result)  
 
 
 #7 snakeToCamel()
-def snakeToCamel():
-    txt = input()
-    x = txt.split("_")
-    for i in range(1, len(x)):
-        x[i] = x[i].capitalize()
-    for x in x:
-        print(x, end='')
+def snake_to_camel():
+    txt = input("Enter: ")
+    words = txt.split("_")
+    camel_case = words[0] + "".join(word.capitalize() for word in words[1:])  
+    print(camel_case) 
 
 
 #8 splitUpper()
-def splitUpper():
-    txt = input()
-    x = txt
-    for i in range(0, len(x)):
-        if x[i].isupper():
-            x1 = x[:i]
-            x2 = x[i + 1:]
-            x = x1 + ' ' + x2
-    # l = x.split(' ')
-    l = re.split("\s", x)
-    l2 = []
-    for i in l:
-        if len(i) != 0:
-            l2.append(i)
-    print(l) # if DidarBakir [ [], 'idar', 'akir' ]
-    print(l2)
+def split_at_uppercase(s):
+    return re.split(r'(?=[A-Z])', s)
 
 
 #9 splitUpper2()
-def splitUpper2():
-    txt = input()
-    x = re.sub(r"([A-Z][a-z]+)", r" \1", txt).strip()
-    print(x)
+def split_upper_case():
+    txt = input("Enter a string: ")
+    result = re.sub(r'([A-Z][a-z]*)', r' \1', txt).strip()
+    print(result)
 
 
 #10 camelToSnake()
-def camelToSnake():
-    txt = input()    
-    x = re.sub(r"([A-Z][a-z]+)", r" \1", txt).strip()
-    # camelCase
-    # print(x)
-    # camel Case
-    x = x.split(' ')
-    s = ''
-    for i in range(0, len(x)):
-        s += x[i].lower() + '_'
-    print(s[:-1]) # deleting last character
+def camel_to_snake():
+    txt = input("Enter a CamelCase string: ")
+    snake_case = re.sub(r'([a-z])([A-Z])', r'\1_\2', txt).lower() 
+    print(snake_case)
+
