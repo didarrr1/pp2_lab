@@ -1,52 +1,59 @@
 import pygame
-import sys
-from datetime import datetime
 
+import pygame
+import math
+import time
+
+# Инициализация Pygame
 pygame.init()
 
-WIDTH, HEIGHT = 800, 600
-CENTER = (WIDTH // 2, HEIGHT // 2)
+# Размеры окна
+WIDTH, HEIGHT = 500, 500
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Mickey Clock")
 
-body_image = pygame.image.load("mickey_body.png").convert_alpha()
-right_hand_image = pygame.image.load("right_hand.png").convert_alpha()
-left_hand_image = pygame.image.load("left_hand.png").convert_alpha()
+# Загрузка изображения Микки
+mickey = pygame.image.load("clock.png")
+mickey = pygame.transform.scale(mickey, (500, 500))
+clock_center = (WIDTH // 2, HEIGHT // 2)
 
-body_rect = body_image.get_rect(center=CENTER)
-right_hand_rect = right_hand_image.get_rect(center=CENTER)
-left_hand_rect = left_hand_image.get_rect(center=CENTER)
+minute_hand = pygame.image.load("min_hand.png")  # Стрелка минут
+second_hand = pygame.image.load("sec_hand.png")  # Стрелка секунд
 
-clock = pygame.time.Clock()
 
-def blit_rotate_center(surf, image, origin_pos, angle):
-image_rect = image.get_rect(topleft=(origin_pos[0], origin_pos[1]))
-offset_center_to_pivot = pygame.math.Vector2(origin_pos) - image_rect.center
-rotated_offset = offset_center_to_pivot.rotate(-angle)
-rotated_image_center = (origin_pos[0] - rotated_offset.x, origin_pos[1] - rotated_offset.y)
-rotated_image = pygame.transform.rotate(image, angle)
-rotated_image_rect = rotated_image.get_rect(center=rotated_image_center)
-surf.blit(rotated_image, rotated_image_rect.topleft)
 
-while True:
-for event in pygame.event.get():
+def rotate_hand(image, angle, center):
+    rotated_image = pygame.transform.rotate(image, angle)
+    new_rect = rotated_image.get_rect(center=center)
+    return rotated_image, new_rect
+
+
+running = True
+while running:
+    screen.fill((255, 255, 255))
+    screen.blit(mickey, (clock_center[0] - 250, clock_center[1] - 250))
+
+    current_time = time.localtime()
+    minutes = current_time.tm_min
+    seconds = current_time.tm_sec
+
+    min_angle = - (minutes * 6)  # 360/60 = 6 градусов на минуту
+    sec_angle = - (seconds * 6)  # 360/60 = 6 градусов на секунду
+
+    # Отображение стрелок
+    rotated_min_hand, min_rect = rotate_hand(
+        minute_hand, min_angle, clock_center)
+    rotated_sec_hand, sec_rect = rotate_hand(
+        second_hand, sec_angle, clock_center)
+
+    screen.blit(rotated_min_hand, min_rect.topleft)
+    screen.blit(rotated_sec_hand, sec_rect.topleft)
+
+    pygame.display.flip()
+    pygame.time.delay(100)
+
+    for event in pygame.event.get():
         if event.type == pygame.QUIT:
-        pygame.quit()
-        sys.exit()
+            running = False
 
-now = datetime.now()
-minutes = now.minute
-seconds = now.second
-
-    minute_angle = -6 * minutes 
-    second_angle = -6 * seconds  
-
-screen.fill((255, 255, 255))
-
-screen.blit(body_image, body_rect.topleft)
-
-blit_rotate_center(screen, right_hand_image, CENTER, minute_angle)
-blit_rotate_center(screen, left_hand_image, CENTER, second_angle)
-
-pygame.display.flip()
-clock.tick(60)
+pygame.quit()

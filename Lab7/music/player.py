@@ -1,59 +1,53 @@
 import pygame
-import sys
 import os
 
+# Инициализация Pygame и микшера
 pygame.init()
+pygame.mixer.init()
 
-WIDTH, HEIGHT = 800, 600
+# Настройки окна
+WIDTH, HEIGHT = 400, 300
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Music Player")
 
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-
-music_folder = "music"
-music_files = [f for f in os.listdir(music_folder) if f.endswith(('.mp3', '.ogg'))]
+playlist = ["DieWithASmile.mp3", "DietMountainDew.mp3", "BornToDie.mp3"]  
 current_track = 0
 
-def load_music(index):
-    if 0 <= index < len(music_files):
-        pygame.mixer.music.load(os.path.join(music_folder, music_files[index]))
-        pygame.mixer.music.play()
 
-if music_files:
-    load_music(current_track)
+def play_music():
+    pygame.mixer.music.load(playlist[current_track])
+    pygame.mixer.music.play()
 
-font = pygame.font.SysFont(None, 48)
-clock = pygame.time.Clock()
 
-while True:
+def stop_music():
+    pygame.mixer.music.stop()
+
+
+def next_track():
+    global current_track
+    current_track = (current_track + 1) % len(playlist)
+    play_music()
+
+
+def prev_track():
+    global current_track
+    current_track = (current_track - 1) % len(playlist)
+    play_music()
+
+
+running = True
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:  
-                if pygame.mixer.music.get_busy():
-                    pygame.mixer.music.pause()
-                else:
-                    pygame.mixer.music.unpause()
-            elif event.key == pygame.K_s: 
-                pygame.mixer.music.stop()
-            elif event.key == pygame.K_n:  
-                current_track = (current_track + 1) % len(music_files)
-                load_music(current_track)
-            elif event.key == pygame.K_b:  
-                current_track = (current_track - 1) % len(music_files)
-                load_music(current_track)
+            if event.key == pygame.K_p:  # Play
+                play_music()
+            elif event.key == pygame.K_s:  # Stop
+                stop_music()
+            elif event.key == pygame.K_n:  # Next track
+                next_track()
+            elif event.key == pygame.K_b:  # Previous track
+                prev_track()
 
-    screen.fill(WHITE)
-    if music_files:
-        track_name = os.path.basename(music_files[current_track])
-        text = font.render(f"Playing: {track_name}", True, BLACK)
-        screen.blit(text, (20, 20))
-    else:
-        text = font.render("No music files found.", True, BLACK)
-        screen.blit(text, (20, 20))
-
-    pygame.display.flip()
-    clock.tick(30)
+pygame.quit()
