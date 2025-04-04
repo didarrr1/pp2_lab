@@ -37,13 +37,13 @@ pygame.display.set_caption("Game")
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
+      def __init__(self):
         super().__init__() 
         self.image = pygame.image.load("Enemy.png")
         self.rect = self.image.get_rect()
         self.rect.center = (random.randint(40,SCREEN_WIDTH-40), 0)
 
-    def move(self):
+      def move(self):
         global SCORE
         self.rect.move_ip(0,SPEED)
         if (self.rect.bottom > 600):
@@ -58,17 +58,17 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load("Player.png")
         self.rect = self.image.get_rect()
         self.rect.center = (160, 520)
-    
+       
     def move(self):
         pressed_keys = pygame.key.get_pressed()
         
         if self.rect.left > 0:
-            if pressed_keys[K_LEFT]:
-                self.rect.move_ip(-5, 0)
+              if pressed_keys[K_LEFT]:
+                  self.rect.move_ip(-5, 0)
         if self.rect.right < SCREEN_WIDTH:        
-            if pressed_keys[K_RIGHT]:
-                self.rect.move_ip(5, 0)
-                
+              if pressed_keys[K_RIGHT]:
+                  self.rect.move_ip(5, 0)
+                  
 
 #Setting up Sprites        
 P1 = Player()
@@ -87,11 +87,11 @@ pygame.time.set_timer(INC_SPEED, 1000)
 
 #Game Loop
 while True:
-    
+      
     #Cycles through all events occuring  
     for event in pygame.event.get():
         if event.type == INC_SPEED:
-            SPEED += 0.5      
+              SPEED += 0.5      
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
@@ -109,18 +109,18 @@ while True:
 
     #To be run if collision occurs between Player and Enemy
     if pygame.sprite.spritecollideany(P1, enemies):
-        pygame.mixer.Sound('crash.wav').play()
-        time.sleep(1)
-        
-        DISPLAYSURF.fill(RED)
-        DISPLAYSURF.blit(game_over, (30,250))
-        
-        pygame.display.update()
-        for entity in all_sprites:
+          pygame.mixer.Sound('crash.wav').play()
+          time.sleep(1)
+                   
+          DISPLAYSURF.fill(RED)
+          DISPLAYSURF.blit(game_over, (30,250))
+          
+          pygame.display.update()
+          for entity in all_sprites:
                 entity.kill() 
-        time.sleep(2)
-        pygame.quit()
-        sys.exit()        
+          time.sleep(2)
+          pygame.quit()
+          sys.exit()        
         
     pygame.display.update()
     FramePerSec.tick(FPS)
